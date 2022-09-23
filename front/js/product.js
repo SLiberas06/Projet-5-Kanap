@@ -11,10 +11,10 @@ function dataApi(){
     const dataApi = fetch("http://localhost:3000/api/products/"+ idProduct);
         dataApi
         .then(async(resData)=>{
-            console.table(resData);
+            // console.table(resData);
             //déclaration de la constante detail qui a pour valeur la reponse de l'api au format json
             const detail = await resData.json();
-                console.table(detail);
+                // console.table(detail);
                     //si l'on a les details on appelle la fonction 
                     if(detail){
                         addDetail(detail);
@@ -47,7 +47,7 @@ async function addDetail(detail){
         colorChoice.value = color;
         colorChoice.innerHTML = color;
     }
-
+addCart(detail);
 };
 //---------------------------------Ajout au panier--------------------------------------------
 //Récupération des données sélectionnées et l'envoi au panier
@@ -62,24 +62,23 @@ const btn_addToCart = document.querySelector('#addToCart');
 
 //Ecouter le bouton et ajouter au panier
 btn_addToCart.addEventListener("click",(event)=>{
-    event.preventDefault();
+   
 
 //Intégrer les choix en variables
-const optionColor = colorChoice.value;
-const optionQuantity = quantityChoice.value;
+let optionColor = colorChoice.value;
+let optionQuantity = quantityChoice.value;
 
 //Récuperation des valeurs du formulaire
 
-let optionProduct ={
-    name : detail.name,
-    id: idProduct,
-    color : optionColor,
+let optionProduct = { 
+    productName : detail.name,
+    productId: idProduct,
+    choiceColor : optionColor,
     quantity :optionQuantity,
-    price : detail.price,
-    description : detail.description,
-    image : detail.imageUrl,
-    alt : detail.altTxt
-
+    productPrice : detail.price,
+    productDescription : detail.description,
+    productImage : detail.imageUrl,
+    imageAlt : detail.altTxt
 }
-console.log(optionProduct);
+console.table(optionProduct);
 })};

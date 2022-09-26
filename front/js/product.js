@@ -1,10 +1,10 @@
 //Paramétrage de récupération de l'id dans l'URL de la page "produits"
-    let source = window.location.href;
-        // console.log(source); renvoi l'url du lien(href) de la fenêtre(window) locale(location)
-    let url = new URL(source);
-        // console.log(url); renvoi le détail de l'url sous forme d'objet
-    const idProduct = url.searchParams.get("id");
-         // console.log(idProduct); renvoi l'id de la page produit + Vérification que chaque page produit a attribuée sont propre id
+let source = window.location.href;
+// console.log(source); renvoi l'url du lien(href) de la fenêtre(window) locale(location)
+let url = new URL(source);
+// console.log(url); renvoi le détail de l'url sous forme d'objet
+const idProduct = url.searchParams.get("id");
+// console.log(idProduct); renvoi l'id de la page produit + Vérification que chaque page produit a attribuée sont propre id
          
 //récuperation des données Api de l'id appelé
 function dataApi(){
@@ -72,11 +72,9 @@ function addCart(detail){
             let optionColor = colorChoice.value;
             let optionQuantity = quantityChoice.value;
             //Si la couleur n'est pas sélectionnée
-                // if(optionColor =! optionColor){
-                //     alert("Merci de sélectionner la couleur souhaitée !");
-                // }else{
-                
-                // };
+                if(optionColor < [1]){
+                    alert("Merci de sélectionner la couleur souhaitée !");
+                };
             //Si l'utilisateur choisit une quantité supérieur au stock évoqué
                 if(optionQuantity > 100){
                     alert( "Quantité limitée");
@@ -103,7 +101,7 @@ function addCart(detail){
                 optionProduct.productPrice = optionProduct.productPrice * optionQuantity;
             };
 
-            console.log(optionColor);
+            console.log(optionProduct);
 //------------------------------------------Local storage-----------------------------------------------------------
 //--------------------------Stocker les valeurs du formulaire dans le storage---------------------------------------
 //déclaration de la variable "produit dans le local storage", puis convertir les données au format JSON en objet JavaScript
@@ -122,7 +120,7 @@ function addCart(detail){
                 // if(productInLocalStorage){
                 //     productInLocalStorage.push(optionProduct);
                 //     localStorage.setItem('product',JSON.stringify(productInLocalStorage));
-                //     console.log(productInLocalStorage);
+                    console.log(productInLocalStorage);
                 //     popupConfirmation();
                 // }
                 // //si il n'y a pas de produits enregistrés dans le local storage

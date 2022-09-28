@@ -104,32 +104,29 @@ function addCart(detail){
             console.log(optionProduct);
 //------------------------------------------Local storage-----------------------------------------------------------
 //--------------------------Stocker les valeurs du formulaire dans le storage---------------------------------------
-//déclaration de la variable "produit dans le local storage", puis convertir les données au format JSON en objet JavaScript
+            //déclaration de la variable "produit dans le local storage", puis convertir les données au format JSON en objet JavaScript
             let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
-                //fonction popup
-                // const popupConfirmation = () =>{
-                //     if(window.confirm(`${detail.name} option :${optionColor},${optionQuantity} a bien été ajouté au panier
-                //     Voir le panier OK ou continuer mes achats ANNULER`)){
-                //         window.location.href = "cart.html";
 
-                //     }else{
-                //         window.location.href = "index.html";
-                //     }
-                // }
-                //si il y a des produits enregistrés dans le local storage 
-                // if(productInLocalStorage){
-                //     productInLocalStorage.push(optionProduct);
-                //     localStorage.setItem('product',JSON.stringify(productInLocalStorage));
+            //fonction ajouter un produit seléctionné dans le local storage
+            const addProductLocalStorage = ()=> {
+
+                //ajout dans le tableau de l'objet avec les valeurs choisies par l'utilisateur
+                productInLocalStorage.push(optionProduct);
+
+                //transformation en format JSON et envoi dans la clé "product" du local storage
+                localStorage.setItem('product',JSON.stringify(productInLocalStorage));
+            }
+                // si il y a des produits enregistrés dans le local storage 
+                if(productInLocalStorage){
+                    addProductLocalStorage();
                     console.log(productInLocalStorage);
-                //     popupConfirmation();
-                // }
-                // //si il n'y a pas de produits enregistrés dans le local storage
-                // else{
-                // productInLocalStorage = [];
-                // productInLocalStorage.push(optionProduct);
-                // localStorage.setItem('product',JSON.stringify(productInLocalStorage));
-                // console.log(productInLocalStorage);
-                // popupConfirmation();
-                // }
+                }
+
+                //si il n'y a pas de produits enregistrés dans le local storage
+                else{
+                productInLocalStorage = [];
+                addProductLocalStorage();
+                console.log(productInLocalStorage);
+                }
         })
-    }; 
+}

@@ -27,7 +27,7 @@ let productStructureCart = [];
     else{
         
         //boucle d'implatation des données du local storage dans les éléments HTML
-        for (j = 0; j < productInLocalStorage.length; j++){
+        for ( j = 0; j < productInLocalStorage.length; j++){
             // console.log(productInLocalStorage.length);
             productStructureCart = productStructureCart + `<article class="cart__item" data-id="${productInLocalStorage[j].productId}" data-color="${productInLocalStorage[j].choiceColor}">
             <div class="cart__item__img">
@@ -41,7 +41,7 @@ let productStructureCart = [];
               </div>
               <div class="cart__item__content__settings">
                 <div class="cart__item__content__settings__quantity">
-                  <p>Qté : ${productInLocalStorage[j].quantity} </p>
+                  <p>Qté :  </p>
                   <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productInLocalStorage[j].quantity}">
                 </div>
                 <div class="cart__item__content__settings__delete">
@@ -99,7 +99,6 @@ function prixTotal(){
   //Récuperer les prix qui sont dans le panier
   for (let l = 0 ; l < productInLocalStorage.length ; l++){
     let priceProductToCart = productInLocalStorage[l].productPrice;
-
   //Intégrer les prix à la variable "prixTotalCalcul" sous forme de tableau/array
   prixTotalCalcul.push(priceProductToCart);
     console.log(prixTotalCalcul);
@@ -113,33 +112,79 @@ console.log(totalPrice);
 //Afficher le prix total et la quantité total dans articles dans le panier, en l'intégrant en HTML
 //Déclaration de l'emplacement HTML pour le total et les quantités produits
 const displayTotalPrice = document.querySelector('#totalPrice');
-  displayTotalPrice.innerHTML = `${totalPrice}`;
+      displayTotalPrice.innerHTML = `${totalPrice}`;
+  
+
 }
 prixTotal();
 
-//-------------------------------------Modifier la quantité d'un produit dans le panier----------------------------------------------------------
-function modifierQuantity(){
-  let quantityModif = setAttribute('itemQuantity','42');//ici peut etre les paramettres a modifier pour faire la fonction
+//----------------------------------------------------Quantité totale d'article dans le panier---------------------------------------------------
 
-  for ( let m = 0 ; m < quantityModif.length ; m++){
-    quantityModif[m].addEventListener('change',(event)=>{
-      event.preventDefault();
 
-      let quantityProduct = productInLocalStorage[m].quantity;
-      let modifQuantity = quantityModif[m].choiceColor;
+// let quantityOfProduct = 0;
 
-      const choiceQuantity = productInLocalStorage.find((el) => el.modifQuantity !== quantityProduct);
-            choiceQuantity.quantity = modifQuantity;
-      
-      productInLocalStorage[m].quantity = choiceQuantity.quantity;
-
-      localStorage.setItem("product", JSON.stringify(productInLocalStorage));
-
-      location.reload();
-    })
-  
+// let panier = document.querySelector('#cart__items');
     
+
+// for (quantityOfProduct of panier){
+//     quantityOfProduct += JSON.parse(panier.dataset.quantity);
+//     totalPrice += panier.dataset.quantity * panier.dataset.productPrice;
+//   };
+
+// document.getElementById('totalQuantity').textContent = quantityOfProduct;
+
+  
+  
+
+//Je dois rajouter les valeurs aux inputs dans le code HTML sans quoi je ne peut ni déclarer ni modifier les valeurs de celle ci et donc des quantités connasse!!
+
+//-------------------------------------Modifier la quantité d'un produit dans le panier----------------------------------------------------------
+function modifQuantity() {
+
+  let inputQuantity = document.querySelectorAll('.itemQuantity');
+  let priceProduct = document.querySelectorAll('.cart__item__content__description');
+
+  for (let m = 0; m < productInLocalStorage.length; m++){
+
+      inputQuantity.value =`value="${[m]}"`;
+      priceProduct.value =`<div class="cart__item__content__description">
+      <h2>Nom du produit</h2>
+      <p>Vert</p>
+      <p>${[m]} €</p>
+    </div>`;
+    priceProduct.innerHTML = `<p>${priceProduct} €</p>`;
+
+      inputQuantity[m].addEventListener("change" , (event) => {
+          event.preventDefault();
+
+          //Selection de l'element à modifier en fonction de son id ET sa couleur
+           let quantityValue = inputQuantity[m].valueAsNumber;
+          console.log(quantityValue);
+
+          let idProduct =  productInLocalStorage[m].choiceColor + " " + productInLocalStorage[m].productId;
+          console.log(idProduct);
+
+          let priceProduct = productInLocalStorage[m].productPrice * quantityValue;
+          console.log(priceProduct);
+
+        
+          const calculQuantity = productInLocalStorage.find((el)=> el.quantityValue !== productInLocalStorage[m].quantity);
+          
+          console.log(calculQuantity);
+          
+                calculQuantity.quantity = quantityValue;
+                productInLocalStorage[m].quantity = calculQuantity.quantity;
+
+              //   if (m === productInLocalStorage.length){
+              //     priceProduct.innerHTML = `<p>${priceProduct} €</p>`;
+              // }
+
+          localStorage.setItem("product", JSON.stringify(productInLocalStorage));
+
+         
+          // refresh rapide
+          // window.location.href = "cart.html";
+      });
   }
 }
-modifierQuantity();
-// modifier les qualités produit dans le paniers
+modifQuantity();

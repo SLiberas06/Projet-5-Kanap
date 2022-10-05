@@ -5,7 +5,7 @@ let url = new URL(source);
 // console.log(url); renvoi le détail de l'url sous forme d'objet
 const idProduct = url.searchParams.get("id");
 // console.log(idProduct); renvoi l'id de la page produit + Vérification que chaque page produit a attribuée sont propre id
-         
+
 //récuperation des données Api de l'id appelé
 function dataApi(){
     const dataApi = fetch("http://localhost:3000/api/products/"+ idProduct);
@@ -37,6 +37,7 @@ async function addDetail(detail){
     //Ajout du prix du produit
     let price = document.querySelector('#price');
         price.innerHTML = `${detail.price}`;
+        price.value =`${detail.price}`;
     //Ajout de la description du produit
     let description = document.querySelector('#description');
         description.textContent = `${detail.description}`;
@@ -59,6 +60,7 @@ function addCart(detail){
     //Sélection de id du formulaire
     const colorChoice = document.querySelector("#colors");
     const quantityChoice = document.querySelector("#quantity");
+    const unitPrice = document.querySelector("#price");
 
     //Selection du bouton "Ajouter au panier"
     const btn_addToCart = document.querySelector('#addToCart');
@@ -71,6 +73,8 @@ function addCart(detail){
             //Intégrer les choix en variables
             let optionColor = colorChoice.value;
             let optionQuantity = quantityChoice.value;
+            let optionPrice = unitPrice.value;
+
             //Si la couleur n'est pas sélectionnée
                 if(optionColor < [1]){
                     alert("Merci de sélectionner la couleur souhaitée !");
@@ -83,24 +87,19 @@ function addCart(detail){
                 else if(optionQuantity < 1){
                     alert("Merci de sélectionner la quantité souhaitée !");
                 };
-            
+               
             //Récuperation des valeurs du formulaire
             let optionProduct = { 
                 productName : detail.name,
                 productId: idProduct,
                 choiceColor : optionColor,
                 quantity :optionQuantity,
-                productPrice : detail.price,
                 productDescription : detail.description,
                 productImage : detail.imageUrl,
                 imageAlt : detail.altTxt
                
             };
-            //conditions de calcul du prix par rapport à la quantité
-            if(optionQuantity + 1){
-                optionProduct.productPrice = optionProduct.productPrice * optionQuantity;
-            };
-
+           
             console.log(optionProduct);
 //------------------------------------------Local storage-----------------------------------------------------------
 //--------------------------Stocker les valeurs du formulaire dans le storage---------------------------------------

@@ -1,17 +1,26 @@
-function dataApi(){
-  const dataApi = fetch("http://localhost:3000/api/products");
-  dataApi.then(async(resData)=>{
+//déclaration de la variable "produit dans le local storage", puis convertir les données au format JSON en objet JavaScript
+let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
+console.log(productInLocalStorage);
 
-  let response = await resData.json();
-  console.log(response);
 
-  //déclaration de la variable "produit dans le local storage", puis convertir les données au format JSON en objet JavaScript
-  let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
-  console.log(productInLocalStorage);
+async function productById(productId){
+  return fetch("http://localhost:3000/api/products/" + productId)
+    .then(function(res) {
+      return res.json();
+    })
+    .catch ((err)=>{
+      console.log("erreur: "+ err);
+    })
+    .then(function(response){
+      return response;
+    });
+    
+}
 
 //----------------------------------------------------------------Affichage des produits dans le panier---------------------------------------------------------
-
+async function getDetailToCart(){
   //sélection de la class où je vais intégrer le JS
+ 
   const productDisplayCart = document.querySelector('#cart__items');
   // console.log(productDisplayCart);
 
@@ -22,6 +31,7 @@ function dataApi(){
   let totalQuantity = [];
   let totalPrice = [];  
 
+  // const productInlocalStorage = dataCart();
   //Si le panier est vide : affichage "Panier vide"
   if(productInLocalStorage === null || productInLocalStorage < [0]){
     const emptyCart = `
@@ -37,74 +47,87 @@ function dataApi(){
         
   //si le panier n'est pas vide : afficher les produits stockés dans le local storage
   else{
-              
+   
       //boucle d'implatation des données du local storage dans les éléments HTML
-      for ( j = 0; j < productInLocalStorage.length ; j++){
-          //console.log(productInLocalStorage.length);
-                   
-          productStructureCart = productStructureCart + 
-                  `<article class="cart__item" data-id="${productInLocalStorage[j].productId}" data-color="${productInLocalStorage[j].choiceColor}">
-                      <div class="cart__item__img">
-                        <img src="${productInLocalStorage[j].productImage}" alt="${productInLocalStorage[j].imageAlt}">
-                      </div>
-                      <div class="cart__item__content">
-                        <div class="cart__item__content__description">
-                          <h2>${productInLocalStorage[j].productName}</h2>
-                    <p>Couleur : ${productInLocalStorage[j].choiceColor}</p>
-                    <p>Prix unitaire : ${response[j].price} €</p>
-                        </div>
-                        <div class="cart__item__content__settings">
-                          <div class="cart__item__content__settings__quantity">
-                            <p>Quantité :  </p>
-                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productInLocalStorage[j].quantity}" data-id="${productInLocalStorage[j].productId}" data-color="${productInLocalStorage[j].choiceColor}">
-                          </div>
-                          <div class="cart__item__content__settings__delete">
-                            <p class="deleteItem">Supprimer</p>
-                          </div>
-                        </div>
-                      </div>
-                    </article>`;
-          
-                  //Déclaration de variables pour changer le type string des prix en type number
-                  let priceInNumber = parseInt(response[j].price * productInLocalStorage[j].quantity);
-                  let quantityInNumber = parseInt(productInLocalStorage[j].quantity);
+      for (j = 0; j < productInLocalStorage.length ; j++){
+          const products = await productById(productInLocalStorage[j].productId);
+          console.log(products);
 
+          productStructureCart =  productStructureCart +
+                                `<article class="cart__item" data-id="${productInLocalStorage[j].productId}" data-color="${productInLocalStorage[j].choiceColor}">
+                                    <div class="cart__item__img">
+                                      <img src="${productInLocalStorage[j].productImage}" alt="${productInLocalStorage[j].imageAlt}">
+                                    </div>
+                                    <div class="cart__item__content">
+                                      <div class="cart__item__content__description">
+                                        <h2>${productInLocalStorage[j].productName}</h2>
+                                  <p>Couleur : ${productInLocalStorage[j].choiceColor}</p>
+                                  <p>Prix unitaire : ${products.price} €</p>
+                                      </div>
+                                      <div class="cart__item__content__settings">
+                                        <div class="cart__item__content__settings__quantity">
+                                          <p>Quantité :  </p>
+                                          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productInLocalStorage[j].quantity}">
+                                        </div>
+                                        <div class="cart__item__content__settings__delete">
+                                          <p class="deleteItem">Supprimer</p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </article>`;
+                  console.log(productStructureCart);
+
+                  //Déclaration de variables pour changer le type string des prix en type number
+                  let priceInNumber = parseInt( products.price * productInLocalStorage[j].quantity);
+                  let quantityInNumber = parseInt(productInLocalStorage[j].quantity);                
+                                  
                   //On pousse les valeurs converties en nombres dans les variables Array plus haut
                   totalPrice.push(priceInNumber);
                   totalQuantity.push(quantityInNumber); 
                   console.log(totalPrice);
+                  console.log(totalQuantity);
+                  
 
-              }
 
-              //Intégration du code HTML dans la page "Panier"
-              if (j === productInLocalStorage.length){
+                  //Intégration du code HTML dans la page "Panier"
+                  if (j <= productInLocalStorage.length){
                   productDisplayCart.innerHTML = productStructureCart;
-              }
-           
-  }
-          
+                  calculTotalCart();
+                  }
+                  
+               
+        }
+                 
+      }
+     
+  
+   
+   
 //------------------------------------------------------------Affichage du prix total et de la quantité total----------------------------------------------
+ async function calculTotalCart(){
 
 //Additionner les prix qui sont dans les variables totalQuantity et totalPrice avec la méthode reduce
 const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
 //Résultat du total quantités d'aricles
-const totalQuantityCart = totalQuantity.reduce(reducer, 0);
+const totalQuantityCart = await totalQuantity.reduce(reducer, 0);
       console.log(totalQuantityCart);
 
 //Résultat du total prix d'arcticles
-const totalPriceCart = totalPrice.reduce(reducer, 0);
+const totalPriceCart = await totalPrice.reduce(reducer, 0);
       console.log(totalPriceCart);
 
 //Afficher le prix total et la quantité total dans articles dans le panier, en l'intégrant en HTML
 //Sélection de l'emplacement HTML pour le total prix produits
 const displayTotalPrice = document.querySelector('#totalPrice');
       displayTotalPrice.innerHTML = `${totalPriceCart}`;
+      console.log(displayTotalPrice);
 
 //Sélection de l'emplacement HTML pour le total quantités produits
 const displayTotalQuantity = document.querySelector('#totalQuantity');
       displayTotalQuantity.innerHTML = `${totalQuantityCart}`;
-   
+}
+
 //-----------------------------------------------------------Gestion du bouton supprimer l'article---------------------------------------------------------
 
 //Sélection des références des boutons "Supprimer" 
@@ -118,7 +141,7 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
               console.log(event);
 
         //Sélection du produit par son id et son option couleur qui va etre supprimé grâce au bouton 
-        let IdToDeleted = productInLocalStorage[k].productId + productInLocalStorage[k].choiceColor;
+        let IdToDeleted = productInLocalStorage[k].productId + productInLocalStorage[k].choiceColor ;
 
         //déclaration d'une variable d'alerte de suppression du produit avec les références du produit : nom et couleur.
         let alertDeleteProduct = productInLocalStorage[k].productName + " " + productInLocalStorage[k].choiceColor + " " ;
@@ -141,7 +164,7 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
 
 //--------------------------------------------------Fonction modification Quantité produit---------------------------------------------------------------------
 
-  function modifQuantity() {
+  async function modifQuantity() {
 
     //Sélection de l'élément "input" pour le choix de la quantité 
     let inputModify = document.querySelectorAll('.itemQuantity');
@@ -152,8 +175,9 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
               event.preventDefault();
                     console.log(event);
 
+              const products = productById(productInLocalStorage[m].productId);
               //Déclaration de variables prix/quantité + valeur de l'input
-              let quantityModif = (productInLocalStorage[m].quantity * productInLocalStorage[m].productPrice);
+              let quantityModif = (productInLocalStorage[m].quantity * products.price);
               let quantityValue = inputModify[m].valueAsNumber;
               let idToModif = productInLocalStorage[m].productId + productInLocalStorage[m].choiceColor;
 
@@ -199,8 +223,8 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
             });
     }
   }
-  modifQuantity();
-  })
+ modifQuantity();
 }
-dataApi();  
-
+    
+getDetailToCart();
+  

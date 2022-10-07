@@ -60,7 +60,7 @@ function addCart(detail){
     //Sélection de id du formulaire
     const colorChoice = document.querySelector("#colors");
     const quantityChoice = document.querySelector("#quantity");
-    const unitPrice = document.querySelector("#price");
+    
 
     //Selection du bouton "Ajouter au panier"
     const btn_addToCart = document.querySelector('#addToCart');
@@ -71,14 +71,15 @@ function addCart(detail){
         
 
             //Intégrer les choix en variables
+            
             let optionColor = colorChoice.value;
             let optionQuantity = quantityChoice.value;
-            let optionPrice = unitPrice.value;
+          
 
             //Si la couleur n'est pas sélectionnée
                 if(optionColor < [1]){
                     alert("Merci de sélectionner la couleur souhaitée !");
-                };
+                }
             //Si l'utilisateur choisit une quantité supérieur au stock évoqué
                 if(optionQuantity > 100){
                     alert( "Quantité limitée");
@@ -87,13 +88,15 @@ function addCart(detail){
                 else if(optionQuantity < 1){
                     alert("Merci de sélectionner la quantité souhaitée !");
                 };
-               
+
+                
+            
             //Récuperation des valeurs du formulaire
             let optionProduct = { 
                 productName : detail.name,
                 productId: idProduct,
                 choiceColor : optionColor,
-                quantity :optionQuantity,
+                quantity :Number(optionQuantity),
                 productDescription : detail.description,
                 productImage : detail.imageUrl,
                 imageAlt : detail.altTxt
@@ -117,8 +120,25 @@ function addCart(detail){
             }
                 // si il y a des produits enregistrés dans le local storage 
                 if(productInLocalStorage){
-                    addProductLocalStorage();
+                    
                     console.log(productInLocalStorage);
+                    const inCart = productInLocalStorage.find((el)=>
+                    el.productId === optionProduct.productId && el.choiceColor && optionProduct.choiceColor);
+                            //si oui on verifie si les produits sont deja sélectionné dans le panier
+                            if(inCart){
+                                let newQuantity =
+                            parseInt(optionProduct.quantity)+ parseInt(inCart.quantity);//calcul à revoir
+                            inCart.quantity = newQuantity;
+                            localStorage.setItem('product',JSON.stringify(productInLocalStorage));
+                            console.table(productInLocalStorage);
+                            }
+                            //sinon on ajout l'article séléctionné
+                            else{
+                                productInLocalStorage.push(optionProduct);
+                                localStorage.setItem('product',JSON.stringify(productInLocalStorage));
+                                console.log("ajout article ");
+                                alert("Ajouté au panier")
+                            }
                 }
 
                 //si il n'y a pas de produits enregistrés dans le local storage

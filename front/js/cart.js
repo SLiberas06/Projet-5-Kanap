@@ -93,7 +93,9 @@ async function getDetailToCart(){
                   if (j <= productInLocalStorage.length){
                   productDisplayCart.innerHTML = productStructureCart;
                   calculTotalCart();
-                  }
+                  };
+
+                  
                   
                
         }
@@ -224,7 +226,46 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
     }
   }
  modifQuantity();
-}
-    
-getDetailToCart();
+
   
+//--------------------------------------FORMULAIRE-----------------------------------------------------------------------------------
+const btnCommander = document.querySelector('#order');
+
+console.log(btnCommander);
+
+btnCommander.addEventListener("click",(event)=>{
+  event.preventDefault();
+
+  class surveyForm {
+    constructor(input){
+    this.firstName = document.querySelector("#firstName").value;
+    this.lastName = document.querySelector("#lastName").value;
+    this.address = document.querySelector("#address").value;
+    this.city = document.querySelector("#city").value;
+    this.email = document.querySelector("#email").value; 
+    this.input = document.querySelector(`#${input}`).value
+    }
+  };
+
+  console.log(surveyForm);
+//*********************************Validation du formulaire RegExp****************************//
+
+//Appel de l'instance de la classe survezForm pour creer l'objet surveyFormValues
+const surveyFormValues = new surveyForm("city");
+
+//CONTROL PRENOM - Condition si le texte est une chaine de caractère (^$) entre 3 à 20 caractère // OK
+const firstName = surveyFormValues.firstName;
+
+if(/^[a-zA-Z]{3,20}$/.test(firstName)){
+console.log("OK");
+}
+//Sinon KO
+else{
+console.log("KO");
+};
+// console.log(firstName);
+//regExp a finir
+
+})
+}    
+getDetailToCart();

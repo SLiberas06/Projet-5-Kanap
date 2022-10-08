@@ -123,7 +123,7 @@ function addCart(detail){
                     
                     console.log(productInLocalStorage);
                     const inCart = productInLocalStorage.find((el)=>
-                    el.productId === optionProduct.productId && el.choiceColor && optionProduct.choiceColor);
+                    el.productId === optionProduct.productId && el.choiceColor === optionProduct.choiceColor);
                             //si oui on verifie si les produits sont deja sélectionné dans le panier
                             if(inCart){
                                 let newQuantity =

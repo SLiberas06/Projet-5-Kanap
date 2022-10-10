@@ -1,7 +1,9 @@
 //déclaration de la variable "produit dans le local storage", puis convertir les données au format JSON en objet JavaScript
 let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
-console.log(productInLocalStorage);
+// console.log(productInLocalStorage);
 
+//Recupère les données envoyées par le server via une requête POST
+let orderId = "";
 
 async function productById(productId){
   return fetch("http://localhost:3000/api/products/" + productId)
@@ -15,7 +17,7 @@ async function productById(productId){
       return response;
     });
     
-}
+  }
 
 //----------------------------------------------------------------Affichage des produits dans le panier---------------------------------------------------------
 async function getDetailToCart(){
@@ -51,7 +53,7 @@ async function getDetailToCart(){
       //boucle d'implatation des données du local storage dans les éléments HTML
       for (j = 0; j < productInLocalStorage.length ; j++){
           const products = await productById(productInLocalStorage[j].productId);
-          console.log(products);
+          // console.log(products);
 
           productStructureCart =  productStructureCart +
                                 `<article class="cart__item" data-id="${productInLocalStorage[j].productId}" data-color="${productInLocalStorage[j].choiceColor}">
@@ -75,7 +77,7 @@ async function getDetailToCart(){
                                       </div>
                                     </div>
                                   </article>`;
-                  console.log(productStructureCart);
+                  // console.log(productStructureCart);
 
                   //Déclaration de variables pour changer le type string des prix en type number
                   let priceInNumber = parseInt( products.price * productInLocalStorage[j].quantity);
@@ -84,8 +86,8 @@ async function getDetailToCart(){
                   //On pousse les valeurs converties en nombres dans les variables Array plus haut
                   totalPrice.push(priceInNumber);
                   totalQuantity.push(quantityInNumber); 
-                  console.log(totalPrice);
-                  console.log(totalQuantity);
+                  // console.log(totalPrice);
+                  // console.log(totalQuantity);
                   
 
 
@@ -93,18 +95,14 @@ async function getDetailToCart(){
                   if (j <= productInLocalStorage.length){
                   productDisplayCart.innerHTML = productStructureCart;
                   calculTotalCart();
+                  modifQuantity();
+
                   };
 
-                  
-                  
-               
         }
                  
       }
-     
-  
-   
-   
+
 //------------------------------------------------------------Affichage du prix total et de la quantité total----------------------------------------------
  async function calculTotalCart(){
 
@@ -113,21 +111,22 @@ const reducer = (accumulator, currentValue) => accumulator + currentValue;
 
 //Résultat du total quantités d'aricles
 const totalQuantityCart = await totalQuantity.reduce(reducer, 0);
-      console.log(totalQuantityCart);
+      // console.log(totalQuantityCart);
 
 //Résultat du total prix d'arcticles
 const totalPriceCart = await totalPrice.reduce(reducer, 0);
-      console.log(totalPriceCart);
+      // console.log(totalPriceCart);
 
 //Afficher le prix total et la quantité total dans articles dans le panier, en l'intégrant en HTML
 //Sélection de l'emplacement HTML pour le total prix produits
 const displayTotalPrice = document.querySelector('#totalPrice');
       displayTotalPrice.innerHTML = `${totalPriceCart}`;
-      console.log(displayTotalPrice);
+      // console.log(displayTotalPrice);
 
 //Sélection de l'emplacement HTML pour le total quantités produits
 const displayTotalQuantity = document.querySelector('#totalQuantity');
       displayTotalQuantity.innerHTML = `${totalQuantityCart}`;
+      
 }
 
 //-----------------------------------------------------------Gestion du bouton supprimer l'article---------------------------------------------------------
@@ -140,18 +139,18 @@ let deleteBtn = document.querySelectorAll('.deleteItem');
 for (let k = 0 ; k < deleteBtn.length ; k++){
       deleteBtn[k].addEventListener("click", (event) => {
         event.preventDefault();
-              console.log(event);
+              // console.log(event);
 
         //Sélection du produit par son id et son option couleur qui va etre supprimé grâce au bouton 
         let IdToDeleted = productInLocalStorage[k].productId + productInLocalStorage[k].choiceColor ;
 
         //déclaration d'une variable d'alerte de suppression du produit avec les références du produit : nom et couleur.
         let alertDeleteProduct = productInLocalStorage[k].productName + " " + productInLocalStorage[k].choiceColor + " " ;
-            console.log(IdToDeleted);
+            // console.log(IdToDeleted);
 
         //Fonction de suppresion avec la méthode "filter"
         productInLocalStorage = productInLocalStorage.filter(el => el.productId + el.choiceColor !== IdToDeleted && el.productName !== alertDeleteProduct);
-            console.log(productInLocalStorage);
+            // console.log(productInLocalStorage);
                 
         //Ajouter le produit à supprimer dans le local storage
         localStorage.setItem("product", JSON.stringify(productInLocalStorage));
@@ -166,7 +165,7 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
 
 //--------------------------------------------------Fonction modification Quantité produit---------------------------------------------------------------------
 
-  async function modifQuantity() {
+function modifQuantity() {
 
     //Sélection de l'élément "input" pour le choix de la quantité 
     let inputModify = document.querySelectorAll('.itemQuantity');
@@ -175,12 +174,13 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
     for (let m = 0 ; m < inputModify.length ; m++){
             inputModify[m].addEventListener("change", (event) => {
               event.preventDefault();
-                    console.log(event);
+                    // console.log(event);
 
-              const products = productById(productInLocalStorage[m].productId);
               //Déclaration de variables prix/quantité + valeur de l'input
-              let quantityModif = (productInLocalStorage[m].quantity * products.price);
-              let quantityValue = inputModify[m].valueAsNumber;
+              let quantityModif = parseInt(productInLocalStorage[m].quantity);
+              // console.log(quantityModif);
+              let quantityValue = parseInt(inputModify[m].valueAsNumber);
+              
               let idToModif = productInLocalStorage[m].productId + productInLocalStorage[m].choiceColor;
 
               //Fonction de modification avec la méthode "find"
@@ -189,33 +189,17 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
 
                   //La quantité de la constante newQuantity devient la valeur modifiée de l'input
                   newQuantity.quantity = quantityValue;
-                  console.log(newQuantity);
+                  // console.log(newQuantity);
+
+                  newQuantity.price = quantityModif;
+                  // console.log(newQuantity);
 
 
                   //La quantité du produit dans le local Storage devient la nouvelle quantité
                   productInLocalStorage[m].quantity = newQuantity.quantity;
-                  console.log(productInLocalStorage[m].quantity);
+                  // console.log(productInLocalStorage[m].quantity);
 
-                  // totalPrice.push(quantityModif);
-                  // totalQuantity.push(productInLocalStorage[m].quantity);
-                  // console.log(totalQuantity);
-
-                  // //Additionner les prix qui sont dans les variables totalQuantity et totalPrice avec la méthode reduce
-                  // const reducer = (accumulator, currentValue) => accumulator + currentValue;
-
-                  // //Calcul de prix total et quantité totale
-                  // const modifTotalPrice = totalPrice.reduce(reducer, 0);
-                  // console.log(modifTotalPrice);
-
-                  // //Condition, si on a un affichage prix & un affichage quantité, alors les nouvelles valeurs sont injectés dans le HTML
-                  // if(displayTotalQuantity.innerHTML && displayTotalPrice.innerHTML){
-                  //   displayTotalQuantity.innerHTML = `${productInLocalStorage[m].quantity}`;
-                  //   displayTotalPrice.innerHTML = `${totalPriceCart}`;
-                  // }
-                  // else{
-                  //   return("error");
-                  // }
-                      
+                 
                   //Ajouter l'option "change" de la quantité dans le local storage
                   localStorage.setItem("product", JSON.stringify(productInLocalStorage));
 
@@ -225,10 +209,9 @@ for (let k = 0 ; k < deleteBtn.length ; k++){
             });
     }
   }
- modifQuantity();
-
+  modifQuantity();
   
-//--------------------------------------FORMULAIRE-----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------GESTION DU FORMULAIRE-----------------------------------------------------------------------------------
 const btnCommander = document.querySelector('#order');
 
 console.log(btnCommander);
@@ -248,24 +231,143 @@ btnCommander.addEventListener("click",(event)=>{
   };
 
   console.log(surveyForm);
-//*********************************Validation du formulaire RegExp****************************//
 
-//Appel de l'instance de la classe survezForm pour creer l'objet surveyFormValues
-const surveyFormValues = new surveyForm("city");
+  //Appel de l'instance de la classe survezForm pour creer l'objet surveyFormValues
+  const surveyFormValues = new surveyForm("city");
 
-//CONTROL PRENOM - Condition si le texte est une chaine de caractère (^$) entre 3 à 20 caractère // OK
-const firstName = surveyFormValues.firstName;
-
-if(/^[a-zA-Z]{3,20}$/.test(firstName)){
-console.log("OK");
+//---------------------------------------------------------------------------Validation du formulaire RegExp--------------------------------------------------------------------------//
+//Déclaration d'une constatnte de vérification de saisie adresse 
+const regExpAddress = (value) =>{
+  return /^[a-zA-Z0-9.,-_ ]{5,50}[ ]{0,2}$/.test(value);
 }
-//Sinon KO
-else{
-console.log("KO");
+
+//Déclaration d'un constante de vérification de saisie prenom/Nom/Ville
+const regExpFirstLastName = (value) => {
+  return /^[A-Za-z\é\è\ê\-]{3,30}$/.test(value);
+}
+
+//Déclaration d'une constante de vérification de saisie adresse e-mail
+const regExpEmail = (value) => {
+  return  /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/.test(
+    value);
+}
+
+//alerte en cas de mauvaise saisie prenom/nom/ville
+const textAlertName = (value) => {
+  return `${value} : Les chiffres et symboles ne sont pas autorisés\n minimum 3 caractères / maximum 30 caractères`;
+}
+
+//alerte en cas de mauvaise saisie d'adresse
+const textAlertAdress = (value) => {
+  return ` ${value} : Merci de saisir une adresse / un code postal valide `;
+}
+
+//alerte en cas de mauvaise saisie d'adresse e-mail
+const textAlertemail = (value) => {
+  return ` ${value} : Veuillez saisir une adresse e-mail valide`;
+}
+
+//FONCTION CONTROL DE LA SAISIE DU PRENOM
+function firstNameControl(){
+    //CONTROL PRENOM - Condition si le texte est une chaine de caractère (^$) entre 3 à 20 caractère // OK
+    const firstName = surveyFormValues.firstName;
+
+    if(regExpFirstLastName(firstName)){
+    // console.log("OK");
+    return true;
+    }
+    //Sinon KO
+    else{
+    // console.log("KO");
+    alert(textAlertName("Prénom"));
+    return false; 
+    };
 };
-// console.log(firstName);
-//regExp a finir
+
+//FONCTION CONTROL DE LA SAISIE DU NOM
+function lastNameControl(){
+  //CONTROL Nom - Condition si le texte est une chaine de caractère (^$) entre 3 à 20 caractère // OK
+  const lastName = surveyFormValues.lastName;
+
+  if(regExpFirstLastName(lastName)){
+  // console.log("OK");
+  return true;
+  }
+  //Sinon KO
+  else{
+  // console.log("KO");
+  alert(textAlertName("Nom"));
+  return false; 
+  };
+};
+
+//FONCTION CONTROL DE LA SAISIE DE L'ADRESSE
+function addressControl(){
+  const address = surveyFormValues.address;
+
+  if(regExpAddress(address)){
+    return true;
+  }
+  else{
+    alert(textAlertAdress("Adresse"));
+    return false;
+  }
+}
+
+//FONCTION CONTROL DE LA SAISIE DE LA VILLE
+function cityControl(){
+  const city = surveyFormValues.city;
+
+  if(regExpAddress(city)){
+    return true;
+  }
+  else{
+    alert(textAlertName("Ville"));
+    return false;
+  }
+}
+
+//FONCTION CONTROL DE SAISIE D'ADRESSE E-MAIL
+function emailControl(){
+  const email = surveyFormValues.email;
+
+  if(regExpEmail(email)){
+    return true;
+  }
+  else{
+    alert(textAlertemail("Email"));
+    return false;
+  }
+}
+
+if(firstNameControl() && lastNameControl() && addressControl() && cityControl() && emailControl()){
+  localStorage.setItem("surveyFormValues", JSON.stringify(surveyFormValues));
+}
+else{
+  alert("Veuillez bien remplir le formulaire");
+}
+//---------------------------------------------------------------------------FIN DU CONTROL FORMULAIRE----------------------------------------------------------------------------------
+//ENVOYER LES DONNEES DE LA COMMANDE VERS LE SERVEUR
+function postDataToServer(){
+
+  const postDataToServer ={
+    method: "POST",
+    body: JSON.stringify("product", "surveyForm"),
+    headers: {"Content-Type": "application/json"},
+  };
+  fetch("http://localhost:3000/api/products/order", postDataToServer)
+  .then((response) =>{
+    return response.json();
+  })
+  .then((server)=>{
+    orderId = server.orderId;
+    console.log(orderId);
+  })
+
+  
+}
+postDataToServer();
 
 })
-}    
+} 
 getDetailToCart();

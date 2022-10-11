@@ -1,12 +1,9 @@
 const dataApi = fetch("http://localhost:3000/api/products");
 
     dataApi.then(async(resData)=>{
-
-        console.log(resData);
-
+        // console.log(resData);
         const response = await resData.json();
-
-            console.table(response);
+            // console.table(response);
 
 // Récupération des données Api dans une boucle "for" en triant chaque reponse de l'array sous forme d'objet
             try{
@@ -38,12 +35,12 @@ const dataApi = fetch("http://localhost:3000/api/products");
 
                     //création des éléments <h3> et ajout des noms "produits"
                     const addProduct_name = document.createElement("h3");
-                        addProduct_name.innerHTML= name;
+                        addProduct_name.textContent= name;
                         productArticle.appendChild(addProduct_name);
 
                     //création des éléments <p> et ajout des descriptions "produits"
                     const addProduct_description = document.createElement("p");
-                        addProduct_description.innerHTML = description;
+                        addProduct_description.textContent = description;
                         productArticle.appendChild(addProduct_description);
                 }
             }
@@ -55,32 +52,3 @@ const dataApi = fetch("http://localhost:3000/api/products");
     .catch((err)=>{
         console.log(err);
     })
-
-//Récupération données API
-// fetch("http://localhost:3000/api/products")
-//     .then(function(res){
-//         return res.json()})
-//     .then(function(value){
-//         console.table(value);
-
-//     })
-
-//     .catch((err)=>{
-//         console.log('Error 404');
-//     });
-
-// // Fonction intégration des produits dans le DOM
-// function addProduct(dataApi){
-// const productItems = document.querySelector(".items");
-
-// for (let product of dataApi){
-//     productItems.innerHTML += `<a href="./product.html?id=${product._id}">
-// <article>
-// <img src="${product.imageUrl}" alt="${product.altTxt}">
-// <h3 class="productName">${product.name}</h3>
-// <p class="productDescription"${product.description}</p>
-// </article>
-// </a>`;
-//  }
-// }
-// addProduct();

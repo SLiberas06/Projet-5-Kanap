@@ -30,26 +30,31 @@ dataApi();
 async function addDetail(detail){
     //Ajout du nom du produit
     let title = document.querySelector('#title');
-        title.innerHTML = `${detail.name}`;
+        title.textContent = `${detail.name}`;
     //Ajout de l'image du produit
-    let image = document.querySelector('.item__img');
-        image.innerHTML = `<img src="${detail.imageUrl}" alt="${detail.altTxt}">`;
+    let image = document.createElement("img");
+    document.querySelector('.item__img').appendChild(image);
+        image.src = `${detail.imageUrl}`;
+        image.alt = `${detail.altTxt}`;
+
     //Ajout du prix du produit
     let price = document.querySelector('#price');
-        price.innerHTML = `${detail.price}`;
-        price.value =`${detail.price}`;
+        price.textContent = `${detail.price}`;
+        
     //Ajout de la description du produit
     let description = document.querySelector('#description');
         description.textContent = `${detail.description}`;
+
     //Ajout de la quantité en stock du produit
     let quantity = document.querySelector('#quantity');
-        quantity.innerHTML =`${100}`;
+        quantity.textContent=`${100}`;
+
     //Boucle d'ajout choix des "options de couleur"
     for (let color of detail.colors){
         let colorChoice = document.createElement("option");
         document.querySelector('#colors').appendChild(colorChoice);
         colorChoice.value = color;
-        colorChoice.innerHTML = color;
+        colorChoice.textContent = color;
     }
 addCart(detail);
 };
@@ -118,34 +123,31 @@ function addCart(detail){
                 //transformation en format JSON et envoi dans la clé "product" du local storage
                 localStorage.setItem('product',JSON.stringify(productInLocalStorage));
             }
-                // si il y a des produits enregistrés dans le local storage 
-                if(productInLocalStorage){
+            // si il y a des produits enregistrés dans le local storage 
+            if(productInLocalStorage){
                     
-                    console.log(productInLocalStorage);
-                    const inCart = productInLocalStorage.find((el)=>
-                    el.productId === optionProduct.productId && el.choiceColor === optionProduct.choiceColor);
-                            //si oui on verifie si les produits sont deja sélectionné dans le panier
-                            if(inCart){
-                                let newQuantity =
-                            parseInt(optionProduct.quantity)+ parseInt(inCart.quantity);//calcul à revoir
-                            inCart.quantity = newQuantity;
-                            localStorage.setItem('product',JSON.stringify(productInLocalStorage));
-                            console.table(productInLocalStorage);
-                            }
-                            //sinon on ajout l'article séléctionné
-                            else{
-                                productInLocalStorage.push(optionProduct);
+                console.log(productInLocalStorage);
+                const inCart = productInLocalStorage.find((el)=>
+                el.productId === optionProduct.productId && el.choiceColor === optionProduct.choiceColor);
+                    //si oui on verifie si les produits sont deja sélectionné dans le panier
+                        if(inCart){
+                            let newQuantity =
+                                parseInt(optionProduct.quantity)+ parseInt(inCart.quantity);//calcul à revoir
+                                inCart.quantity = newQuantity;
                                 localStorage.setItem('product',JSON.stringify(productInLocalStorage));
-                                console.log("ajout article ");
-                                alert("Ajouté au panier")
+                                console.table(productInLocalStorage);
+                        }
+                        //sinon on ajout l'article séléctionné
+                        else{
+                            addProductLocalStorage();
                             }
-                }
+            }
 
-                //si il n'y a pas de produits enregistrés dans le local storage
-                else{
+            //si il n'y a pas de produits enregistrés dans le local storage
+            else{
                 productInLocalStorage = [];
                 addProductLocalStorage();
                 console.log(productInLocalStorage);
-                }
-        })
+            }
+         })
 }

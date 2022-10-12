@@ -212,29 +212,36 @@ async function getDetailToCart(){
     btnCommander.addEventListener("click",(event)=>{
       event.preventDefault();
 
-      let idProduct = [];
+      //déclaration d'un array vide pour intégrer les id produit à la commande
+      let idProducts = [];
       for(let n = 0; n < productInLocalStorage.length; n++){
-        idProduct.push(productInLocalStorage[n].productId +" "+productInLocalStorage[n].choiceColor);
+        idProducts.push(productInLocalStorage[n].productId);
       }
-      console.log(idProduct);
-      //Creation de la class Order, en imcrémentant les valeurs de chaque clés dans les éléments sélectionnés du DOM
-      class order {
-        constructor(input){
-        this.firstName = document.querySelector("#firstName").value;
-        this.lastName = document.querySelector("#lastName").value;
-        this.address = document.querySelector("#address").value;
-        this.city = document.querySelector("#city").value;
-        this.email = document.querySelector("#email").value; 
-        this.orderId = idProduct; 
-        }
-      };
-      console.log(order);
+      // console.log(idProducts);
 
-      //Appel de l'instance de survezForm pour creer l'objet surveyFormValues
-      const orderValues = new order("contact");
-      console.log(orderValues);
-       
+      //Creation de la constante du formulaire, en imcrémentant les valeurs de chaque clés dans les éléments sélectionnés du DOM
+      const contact = {
+
+        firstName : document.querySelector("#firstName").value,
+        lastName : document.querySelector("#lastName").value,
+        address : document.querySelector("#address").value,
+        city : document.querySelector("#city").value,
+        email : document.querySelector("#email").value, 
+      };
+      // console.log(contact);
+
       
+    //Création de l'objet order, pour regrouper les données de la commande
+      const order = {
+        contact:{
+          firstName : contact.firstName,
+          lastName : contact.lastName,
+          address : contact.address,
+          city : contact.city,
+          email : contact.email, 
+        },
+        products : idProducts,
+      }
 
     //---------------------------------------------------------------------------Validation du formulaire RegExp--------------------------------------------------------------------------//
     //Déclaration d'une constante de vérification de saisie adresse 
@@ -275,7 +282,7 @@ async function getDetailToCart(){
     //FONCTION CONTROL DE LA SAISIE DU PRENOM
     function firstNameControl(){
         //CONTROL PRENOM - Condition si le texte est une chaine de caractère (^$) entre 3 à 20 caractère // OK
-        const firstName = orderValues.firstName;
+        const firstName = contact.firstName;
 
         if(regExpFirstLastName(firstName)){
         // console.log("OK");
@@ -292,7 +299,7 @@ async function getDetailToCart(){
     //FONCTION CONTROL DE LA SAISIE DU NOM
     function lastNameControl(){
       //CONTROL Nom - Condition si le texte est une chaine de caractère (^$) entre 3 à 20 caractère // OK
-      const lastName = orderValues.lastName;
+      const lastName = contact.lastName;
 
       if(regExpFirstLastName(lastName)){
       // console.log("OK");
@@ -308,7 +315,7 @@ async function getDetailToCart(){
 
     //FONCTION CONTROL DE LA SAISIE DE L'ADRESSE
     function addressControl(){
-      const address = orderValues.address;
+      const address = contact.address;
 
       if(regExpAddress(address)){
         return true;
@@ -321,7 +328,7 @@ async function getDetailToCart(){
 
     //FONCTION CONTROL DE LA SAISIE DE LA VILLE
     function cityControl(){
-      const city = orderValues.city;
+      const city = contact.city;
 
       if(regExpAddress(city)){
         return true;
@@ -334,7 +341,7 @@ async function getDetailToCart(){
 
     //FONCTION CONTROL DE SAISIE D'ADRESSE E-MAIL
     function emailControl(){
-      const email = orderValues.email;
+      const email = contact.email;
 
       if(regExpEmail(email)){
         return true;
@@ -346,52 +353,41 @@ async function getDetailToCart(){
     }
     //ajouter le bouton commander ici 
     if(firstNameControl() && lastNameControl() && addressControl() && cityControl() && emailControl()){
-      localStorage.setItem("order", JSON.stringify(orderValues));
+      // localStorage.setItem("order", JSON.stringify(order));
       // return true;
     }
     else{
       alert("Veuillez bien remplir le formulaire");
       return false;
     }
-    
-    
+  
     //---------------------------------------------------------------------------FIN DU CONTROL FORMULAIRE----------------------------------------------------------------------------------
-      
-    const promisePost = fetch("http://localhost:3000/api/products/order",{
+    // ENVOYER LES DONNEES DE LA COMMANDE VERS LE SERVEUR
+    fetch("http://localhost:3000/api/products/order", {
       method: "POST",
-      body: JSON.stringify("order"),
+      body: JSON.stringify(order),
       headers: {
         "Content-Type": "application/json",
+        "Accept": "application/json",
       },
-    });
-    console.log("promisePost");
-    console.log(promisePost);
-      //ENVOYER LES DONNEES DE LA COMMANDE VERS LE SERVEUR
-    //   const postRequest = (order) => {
-    //   fetch("http://localhost:3000/api/products/order",
-    //   {method: "POST",
-    //   body: JSON.stringify({order}),
-    //   headers: {"Content-Type": "application/json"}})
-    //   // console.log(postRequest());
-      
-    //   //stockage de la reponse de l'api
-    //   .then((response) => response.json())
-    //   .then((data)=>{
-    //     console.log(data);
+    })
+  
+    //stockage de la reponse de l'api
+    .then((response) => response.json())
+    .then((data) =>{
+    // console.log(data);
+    
+    localStorage.clear();
+    //On envois les données du formulaire dans le local storage
+    localStorage.setItem("orderId", data.orderId);
 
-    //   //On envois les données du formulaire dans le local storage
-    //     localStorage.setItem("order", JSON.stringify(orderValues));
-
-    //   //Et on le transfere vers la page confirmation de la commande où l'utilisation trouvera son numero de commande
-    //     // document.location.href = "confirmation.html";
+    //Et on le transfere vers la page confirmation de la commande où l'utilisation trouvera son numero de commande
+    window.location.href = "confirmation.html?" + "/confirmation_order=" + data.orderId;
         
-    //   })
-    //   .catch((err) => {
-    //     alert ("erreur server :" + err.message);
-    //   });
-
-    // }
-    // postRequest();
+    })
+    .catch((err) => {
+        alert ("erreur server :" + err.message);
+    });
 
   })
 }

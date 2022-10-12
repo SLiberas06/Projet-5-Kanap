@@ -362,7 +362,7 @@ async function getDetailToCart(){
     }
   
     //---------------------------------------------------------------------------FIN DU CONTROL FORMULAIRE----------------------------------------------------------------------------------
-    // ENVOYER LES DONNEES DE LA COMMANDE VERS LE SERVEUR
+    // ENVOYER LES DONNEES DE LA COMMANDE VERS LE SERVEUR VIA UNE REQUETE POST
     fetch("http://localhost:3000/api/products/order", {
       method: "POST",
       body: JSON.stringify(order),

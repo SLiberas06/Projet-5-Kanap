@@ -1,14 +1,18 @@
-//FONCTION DE CALCUL DE NUMERO ALEATOIRE POUR lE NUMERO DE COMMANDE
-function displayOrderNumber (){
+//Fonction de recuperation du numéroi de commande
+function displayOrderNumber() {
+  //Paramétrage de récupération de l'id dans l'URL de la page "produits"
+  const params = new URLSearchParams(window.location.search);
 
-    //SELECTION DE L'ELEMENT DANS LE DOM
-    const orderId = document.querySelector("#orderId");
-    
-    //Intégration de l'identifiant de commande dans le DOM via 
-    orderId.textContent = localStorage.getItem("orderId");
+  //recuperation de l'id de commande dans l'url
+  const getId = params.get("orderId");
 
-    //on vide le local storage
-    localStorage.clear();
+  //Selection de l'element dans le DOM
+  const orderId = document.getElementById("orderId");
 
+  //Intégration de l'identifiant de commande dans le DOM via urlSearchParams
+  orderId.textContent = getId;
+
+  //on vide le local storage
+  localStorage.clear();
 }
 displayOrderNumber();

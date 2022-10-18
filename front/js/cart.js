@@ -1,7 +1,7 @@
 //déclaration de la variable "produit dans le local storage", puis convertir les données au format JSON en objet JavaScript
 let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
 
-async function productById(productId) {
+function productById(productId) {
   return fetch("http://localhost:3000/api/products/" + productId)
     .then(function (res) {
       return res.json();
@@ -300,7 +300,7 @@ async function getDetailToCart() {
 
       //Déclaration d'une constante de vérification de saisie adresse e-mail
       const regExpEmail = (value) => {
-        return /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$/.test(
+        return /^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,20}$/.test(
           value
         );
       };
@@ -312,16 +312,16 @@ async function getDetailToCart() {
 
       //message erreur en cas de mauvaise saisie d'adresse
       const textAlertAdress = (value) => {
-        return ` ${value} : Veuillez de saisir une adresse valide`;
+        return `${value} : Veuillez de saisir une adresse valide`;
       };
 
       //message erreur en cas de mauvaise saisie de la ville
       const textAlertCity = (value) => {
-        return ` ${value} : Veuillez saisir une ville ou un code postal valide`;
+        return `${value} : Veuillez saisir une ville ou un code postal valide`;
       };
       //message erreur en cas de mauvaise saisie d'adresse e-mail
       const textAlertemail = (value) => {
-        return ` ${value} : Veuillez saisir une adresse e-mail valide`;
+        return `${value} : Veuillez saisir une adresse e-mail valide`;
       };
 
       //Fonction de control de la saisie du prénom

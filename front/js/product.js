@@ -79,7 +79,7 @@ function addCart(detail) {
     let optionQuantity = quantityChoice.value;
 
     //Si la couleur n'est pas sélectionnée
-    if (optionColor < [1]) {
+    if (optionColor < 1) {
       alert("Merci de sélectionner la couleur souhaitée !");
     }
     //Si l'utilisateur choisit une quantité supérieur au stock évoqué

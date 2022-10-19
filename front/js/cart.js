@@ -17,7 +17,7 @@ function productById(productId) {
 //----------------------------------------------------------------Affichage des produits dans le panier---------------------------------------------------------
 async function getDetailToCart() {
   //sélection de la class où je vais intégrer le JS
-  const productDisplayCart = document.querySelector("#cart__items");
+  const productDisplayCart = document.getElementById("cart__items");
   // console.log(productDisplayCart);
 
   //déclaration d'une variable "Array" vide pour l'implantation de mon selecteur "j" a ma boucle ci-dessous
@@ -47,35 +47,20 @@ async function getDetailToCart() {
       const products = await productById(productInLocalStorage[j].productId);
 
       productStructureCart.push(
-        `<article class="cart__item" data-id="${
-          productInLocalStorage[j].productId
-        }" data-color="${productInLocalStorage[j].choiceColor}">
+        `<article class="cart__item" data-id="${productInLocalStorage[j].productId}" data-color="${productInLocalStorage[j].choiceColor}">
                                       <div class="cart__item__img">
-                                        <img src="${
-                                          productInLocalStorage[j].productImage
-                                        }" alt="${
-          productInLocalStorage[j].imageAlt
-        }">
+                                        <img src="${productInLocalStorage[j].productImage}" alt="${productInLocalStorage[j].imageAlt}">
                                       </div>
                                       <div class="cart__item__content">
                                         <div class="cart__item__content__description">
-                                          <h2>${
-                                            productInLocalStorage[j].productName
-                                          }</h2>
-                                    <p>Couleur : ${
-                                      productInLocalStorage[j].choiceColor
-                                    }</p>
-                                    <p>Prix : ${
-                                      products.price *
-                                      productInLocalStorage[j].quantity
-                                    } €</p>
+                                          <h2>${productInLocalStorage[j].productName}</h2>
+                                    <p>Couleur : ${productInLocalStorage[j].choiceColor}</p>
+                                    <p>Prix unitaire: ${products.price} €</p>
                                         </div>
                                         <div class="cart__item__content__settings">
                                           <div class="cart__item__content__settings__quantity">
                                             <p>Quantité :  </p>
-                                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${
-                                              productInLocalStorage[j].quantity
-                                            }">
+                                            <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${productInLocalStorage[j].quantity}">
                                           </div>
                                           <div class="cart__item__content__settings__delete">
                                             <p class="deleteItem">Supprimer</p>
@@ -169,42 +154,20 @@ async function getDetailToCart() {
   }
 
   //--------------------------------------------------Fonction modification Quantité produit---------------------------------------------------------------------
-  function modifQuantity() {
+  async function modifQuantity() {
     //Sélection de l'élément "input" pour le choix de la quantité
     let inputModify = document.querySelectorAll(".itemQuantity");
 
-    // inputModify.forEach((itemQuantity) => {
-
-    //   itemQuantity.addEventListener('change', (e) => {
-    //     const article = itemQuantity.closest('article');
-
-    //     const id = article.dataset.id;
-    //     console.log(id);
-    //     const colors = article.dataset.colors;
-    //     const object = productInLocalStorage.find(productInLocalStorage => productInLocalStorage.productId === id && productInLocalStorage.choiceColor === colors);
-    //     console.log(object);
-
-    //      if(isNaN(itemQuantity.value)|| itemQuantity.value <= 0){
-    //       itemQuantity.value = 1;
-    //      }
-    //      if(!!object){
-    //       object.quantity = Number(itemQuantity.value);
-    //       localStorage.setItem("product",JSON.stringify(productInLocalStorage));
-    //       calculTotalCart();
-    //      }
-    //   });
-    // });
-
     //Boucle de modification des produits au changement de l'input en référece de l'id du produit
     for (let m = 0; m < inputModify.length; m++) {
+      const products = await productById(productInLocalStorage[m].productId);
+
       inputModify[m].addEventListener("change", (event) => {
         event.preventDefault();
         // console.log(event);
 
         //Déclaration de variables prix/quantité + valeur de l'input
-        let quantityModif = parseInt(
-          productInLocalStorage[m].quantity + productInLocalStorage[m].productId
-        );
+        let quantityModif = parseInt(productInLocalStorage[m].quantity);
         // console.log(quantityModif);
         let quantityValue = parseInt(inputModify[m].valueAsNumber);
         // console.log(quantityValue);
@@ -216,34 +179,27 @@ async function getDetailToCart() {
             el.quantityValue !== quantityModif && el.choiceColor == idToModif
         );
 
-        // console.log(newQuantity);
         //La quantité de la constante newQuantity devient la valeur modifiée de l'input
         newQuantity.quantity = quantityValue;
-        // console.log(newQuantity.quantity);
 
-        //La quantité du produit dans le local Storage devient la nouvelle quantité
-        productInLocalStorage[m].quantity = newQuantity.quantity;
-        // console.log(productInLocalStorage[m].quantity);
+        if (newQuantity) {
+          //on mute la variable de la quantité puis on pousse cette valeur dans l'array du total quantité
+          quantityInNumber = productInLocalStorage[m].quantity - quantityModif;
+          totalQuantity.push(quantityInNumber);
 
-        // console.log(totalQuantity);
+          //On fait de même pour la nouvelle valeur du prix
+          priceInNumber = products.price * quantityInNumber;
+          totalPrice.push(priceInNumber);
 
-        //Ajouter l'option "change" de la quantité dans le local storage
-        //  localStorage.setItem("product", JSON.stringify(productInLocalStorage));
-        if (quantityValue <= 0) {
-          quantityValue = 1;
-          console.log("hee");
-        }
-        if (!!newQuantity) {
-          newQuantity.quantity = productInLocalStorage[m].quantity;
+          //on ajoute la nouvelle valeur de quantité dans le LS
           localStorage.setItem(
             "product",
             JSON.stringify(productInLocalStorage)
           );
+
+          //on appelle la fonction du calcul total quantité et total prix
           calculTotalCart();
         }
-
-        //Rafraîchir la page
-        // location.reload();
       });
     }
   }

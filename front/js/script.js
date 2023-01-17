@@ -1,4 +1,4 @@
-const dataApi = fetch("http://localhost:3000/api/products");
+const dataApi = fetch("https://projet-5-kanap-psi.vercel.app/api/products/");
 
 dataApi
   .then(async (resData) => {

@@ -2,7 +2,7 @@
 let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
 
 function productById(productId) {
-  return fetch("http://localhost:3000/api/products/" + productId)
+  return fetch("https://projet-5-kanap-psi.vercel.app/api/products/" + productId)
     .then(function (res) {
       return res.json();
     })
@@ -365,7 +365,7 @@ async function getDetailToCart() {
 
       //---------------------------------------------------------------------------Fin du control du formulaire---------------------------------------------------------------------------
       //envoyer les données de la commande vers le serveur via une requête POST
-      fetch("http://localhost:3000/api/products/order", {
+      fetch("https://projet-5-kanap-psi.vercel.app/api/products/order", {
         method: "POST",
         body: JSON.stringify(order),
         headers: {

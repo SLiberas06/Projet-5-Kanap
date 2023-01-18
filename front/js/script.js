@@ -23,7 +23,7 @@ dataApi
 
         //création des éléments d'ancrage et ajout des liens "produits"
         const addProduct_id = document.createElement("a");
-        addProduct_id.href = "./product.html?id=" + id;
+        addProduct_id.href = "./html/product.html?id=" + id;
         productItems.appendChild(addProduct_id);
         addProduct_id.appendChild(productArticle);
 

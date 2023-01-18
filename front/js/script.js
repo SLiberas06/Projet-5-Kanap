@@ -1,4 +1,4 @@
-const dataApi = fetch("https://kanap-api-production.up.railway.app/api/products");
+const dataApi = fetch("https://kanap-api-production.up.railway.app/api/products/");
 
 dataApi
   .then(async (resData) => {

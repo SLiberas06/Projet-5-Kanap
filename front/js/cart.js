@@ -2,7 +2,7 @@
 let productInLocalStorage = JSON.parse(localStorage.getItem("product"));
 
 function productById(productId) {
-  return fetch("https://kanap-api-production.up.railway.app/api/products" + productId)
+  return fetch("https://kanap-api-production.up.railway.app/api/products/" + productId)
     .then(function (res) {
       return res.json();
     })

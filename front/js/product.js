@@ -11,10 +11,10 @@ function dataApi() {
   const dataApi = fetch("https://kanap-api-production.up.railway.app/api/products/" + idProduct);
   dataApi
     .then(async (resData) => {
-    
+
       //déclaration de la constante detail qui a pour valeur la reponse de l'api au format json
       const detail = await resData.json();
-      
+
       //si l'on a les details on appelle la fonction
       if (detail) {
         addDetail(detail);
@@ -28,7 +28,7 @@ dataApi();
 
 //sélection d'emplacement dans le code HTML pour chaque clé et insertion des valeurs(detail) dans le DOM
 async function addDetail(detail) {
-  
+
   //Ajout du nom du produit
   let title = document.querySelector("#title");
   title.textContent = `${detail.name}`;

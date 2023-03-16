@@ -1,4 +1,4 @@
-const dataApi = fetch("https://projet-5-kanap-878c.vercel.app/api/products/");
+const dataApi = fetch("https://projet-5-kanap-878c-7nupp757x-sliberas06.vercel.app/api/products/");
 
 dataApi
   .then(async (resData) => {

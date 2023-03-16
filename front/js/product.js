@@ -8,7 +8,7 @@ const idProduct = url.searchParams.get("id");//renvoi l'id de la page produit + 
 
 //récuperation des données Api de l'id appelé
 function dataApi() {
-  const dataApi = fetch("https://projet-5-kanap-878c.vercel.app/api/products/" + idProduct);
+  const dataApi = fetch("https://projet-5-kanap-878c-7nupp757x-sliberas06.vercel.app/api/products/" + idProduct);
   dataApi
     .then(async (resData) => {
 
